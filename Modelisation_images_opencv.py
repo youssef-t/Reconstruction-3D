@@ -24,26 +24,25 @@ def CameraCalibration():
     criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
     # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
     ############ to adapt ##########################FAIT
-    #objp = np.zeros((6*7, 3), np.float32)
-    objp = np.zeros((5*6, 3), np.float32)
-    objp[:, :2] = np.mgrid[0:6, 0:5].T.reshape(-1, 2)
+    objp = np.zeros((6*7, 3), np.float32)
+    objp[:, :2] = np.mgrid[0:7, 0:6].T.reshape(-1, 2)
     # On donne la taille d'un carré du damier en mm
-    objp[:, :2] *= 30
+    #objp[:, :2] *= 30
     #################################################
     #tableaux où seront sotckés les points 3d (de notre objet) et 2d (image) à partir de toutes les images
     objpoints = []  # les points 3d dans le monde réel
     imgpoints = []  # les points 2d de l'image
     ############ to adapt ########################## FAIT
-    #images = glob.glob('Images/chess/*.jpg')
-    images = glob.glob('Images/image_perso_damier/*.jpg')
+
+    images = glob.glob('Images/chess/*.jpg')
     #################################################
     for fname in images:
-        #img = cv.imread(fname)
-        img = cv.pyrDown(cv.imread(fname))
+        img = cv.imread(fname)
+        #img = cv.pyrDown(cv.imread(fname))
         gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
         # Trouver les coins du damier
         ############ to adapt ########################## FAIT
-        ret, corners = cv.findChessboardCorners(gray, (6, 5), None)
+        ret, corners = cv.findChessboardCorners(gray, (7, 6), None)
         #################################################
         print(ret)
         # Si un coin est trouvé, on ajoute "object points" et "image points"
@@ -53,7 +52,7 @@ def CameraCalibration():
             imgpoints.append(corners)
             # Tracer et afficher les coins
             ############ to adapt ########################## FAIT
-            cv.drawChessboardCorners(img, (6, 5), corners2, ret)
+            cv.drawChessboardCorners(img, (7, 6), corners2, ret)
             #################################################
             cv.namedWindow('img', 0)
             cv.imshow('img', img)
@@ -66,7 +65,7 @@ def CameraCalibration():
     print('dist\n',dist)
 
     ############ to adapt ##########################FAIT
-    img = cv.pyrDown(cv.imread('Images/image_perso_damier/img1.jpg'))
+    img = cv.pyrDown(cv.imread('Images/chess/left08.jpg'))
     #################################################
     h, w = img.shape[:2]
     newcameramtx, roi = cv.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))
@@ -82,7 +81,7 @@ def CameraCalibration():
     cv.imshow('img', dst)
     cv.waitKey(1000)
     ############ to adapt ##########################FAIT
-    cv.imwrite('Images/image_perso_damier/calibresultM.png', dst)
+    cv.imwrite('Images/chess/calibresultM.png', dst)
     #################################################
 
     mean_error = 0
@@ -96,8 +95,8 @@ def CameraCalibration():
 
 def DepthMapfromStereoImages():
     ############ to adapt ##########################FAIT ?
-    imgL = cv.pyrDown(cv.imread('Images/aloeL.jpg'))
-    imgR = cv.pyrDown(cv.imread('Images/aloeR.jpg'))
+    imgL = cv.pyrDown(cv.imread('Images/leftCP.jpg'))
+    imgR = cv.pyrDown(cv.imread('Images/rightCP.jpg'))
     #################################################
     # 
     window_size = 3
